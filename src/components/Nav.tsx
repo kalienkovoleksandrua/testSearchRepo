@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import SearchIcon from '../assets/search.svg'
 import FilterIcon from '../assets/settings-2.svg'
 import './Nav.css'
@@ -29,21 +29,18 @@ const PRODUCTS = [
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<string[]>([])
   const [recentSearches, setRecentSearches] = useState<string[]>(['Bananas', 'Oranges', 'Apples'])
   const [isFocused, setIsFocused] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
 
-  // Фільтрація продуктів на основі запиту
-  useEffect(() => {
+  // Фільтрація продуктів на основі запиту (обчислюється під час рендерингу)
+  const suggestions = useMemo(() => {
     if (searchQuery.trim()) {
-      const filtered = PRODUCTS.filter(product =>
+      return PRODUCTS.filter(product =>
         product.toLowerCase().includes(searchQuery.toLowerCase())
       )
-      setSuggestions(filtered)
-    } else {
-      setSuggestions([])
     }
+    return []
   }, [searchQuery])
 
   // Закриття випадаючого списку при кліку поза компонентом
